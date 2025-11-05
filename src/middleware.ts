@@ -23,11 +23,12 @@ export async function middleware(request: NextRequest) {
     },
   });
 
+  // Refresh session and get user to ensure cookies are up to date
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user) {
     const redirectUrl = new URL("/login", request.url);
     redirectUrl.searchParams.set("redirectedFrom", request.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);

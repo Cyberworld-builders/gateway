@@ -28,10 +28,7 @@ export async function registerAction(
   }
 
   const supabase = await createSupabaseServerClient();
-  const {
-    data: { session },
-    error,
-  } = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signUp({
     email,
     password,
   });
@@ -40,8 +37,9 @@ export async function registerAction(
     return { error: error.message };
   }
 
-  const destination = session ? "/dashboard" : "/login";
-  revalidatePath(destination);
-  redirect(destination);
+  // After successful signup, always redirect to dashboard
+  // Middleware will handle session validation
+  revalidatePath("/dashboard");
+  redirect("/dashboard");
 }
 
