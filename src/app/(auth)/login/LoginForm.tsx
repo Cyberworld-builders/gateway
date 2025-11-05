@@ -1,7 +1,8 @@
 'use client';
 
 import Link from "next/link";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 
 import { loginAction, type AuthFormState } from "./actions";
 
@@ -22,7 +23,7 @@ function SubmitButton({ label }: { label: string }) {
 }
 
 export function LoginForm({ redirectTo }: { redirectTo?: string }) {
-  const [state, formAction] = useFormState(loginAction, initialState);
+  const [state, formAction] = useActionState(loginAction, initialState);
   const error = state?.error;
 
   return (
