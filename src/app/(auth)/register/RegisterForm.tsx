@@ -1,7 +1,8 @@
 'use client';
 
 import Link from "next/link";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 
 import type { AuthFormState } from "../login/actions";
 import { registerAction } from "./actions";
@@ -23,7 +24,7 @@ function SubmitButton({ label }: { label: string }) {
 }
 
 export function RegisterForm() {
-  const [state, formAction] = useFormState(registerAction, initialState);
+  const [state, formAction] = useActionState(registerAction, initialState);
   const error = state?.error;
 
   return (
