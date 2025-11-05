@@ -12,7 +12,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next({ request });
 
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+  const supabase = createServerClient(supabaseUrl!, supabaseAnonKey!, {
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll: (cookies) => {
