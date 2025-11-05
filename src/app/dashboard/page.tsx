@@ -1,4 +1,7 @@
+import Link from "next/link";
+import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import PageBackground from "@/components/PageBackground";
 
 import { SignOutButton } from "./SignOutButton";
 
@@ -9,44 +12,107 @@ export default async function DashboardPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-8 px-6 py-24">
-        <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold">Gateway dashboard</h1>
-            <p className="text-sm text-slate-400">
-              View your profile and cross-product access in one place.
-            </p>
+    <div className="min-h-screen bg-[#1a1a1a] text-[#00ff00] px-6 py-12 relative">
+      {/* Circuit background */}
+      <PageBackground opacity={15} fullWidth={true} />
+      
+      <div className="max-w-4xl mx-auto relative z-10">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-12">
+          <div className="flex items-center gap-4">
+            <Link href="/">
+              <Image
+                src="/images/logo.png"
+                alt="CyberWorld Gateway"
+                width={80}
+                height={80}
+                className="hover:opacity-80 transition"
+              />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-mono uppercase text-[#00ff00] mb-1">
+                // Dashboard
+              </h1>
+              <p className="text-sm text-[#00ff00]/60 font-mono">
+                &gt; gateway control panel
+              </p>
+            </div>
           </div>
           <SignOutButton />
         </header>
 
-        <section className="grid gap-4 sm:grid-cols-2">
-          <article className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
-            <h2 className="text-sm font-medium uppercase tracking-widest text-slate-400">
-              Account
+        <div className="grid gap-6 sm:grid-cols-2 mb-8">
+          <div className="border border-[#00ff00]/30 bg-[#0d0d0d] p-6">
+            <h2 className="text-sm font-mono uppercase tracking-widest text-[#a6e102] mb-4">
+              [ ACCOUNT_INFO ]
             </h2>
-            <p className="mt-3 text-2xl font-semibold text-slate-100">
-              {user?.email ?? "Unknown user"}
-            </p>
-            <p className="mt-2 text-sm text-slate-400">
-              Supabase auth UID: <span className="font-mono text-xs">{user?.id}</span>
-            </p>
-          </article>
+            <div className="space-y-3 text-sm">
+              <div>
+                <span className="text-[#00ff00]/60 font-mono">user:</span>{" "}
+                <span className="text-[#00ff00]">{user?.email ?? "Unknown"}</span>
+              </div>
+              <div>
+                <span className="text-[#00ff00]/60 font-mono">uid:</span>{" "}
+                <span className="text-[#00ff00]/80 font-mono text-xs break-all">
+                  {user?.id}
+                </span>
+              </div>
+              <div>
+                <span className="text-[#00ff00]/60 font-mono">status:</span>{" "}
+                <span className="text-[#a6e102]">AUTHENTICATED</span>
+              </div>
+            </div>
+          </div>
 
-          <article className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
-            <h2 className="text-sm font-medium uppercase tracking-widest text-slate-400">
-              Next steps
+          <div className="border border-[#00ff00]/30 bg-[#0d0d0d] p-6">
+            <h2 className="text-sm font-mono uppercase tracking-widest text-[#a6e102] mb-4">
+              [ PRODUCTS ]
             </h2>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-300">
-              <li>Wire product-specific schemas &amp; RLS policies.</li>
-              <li>Expose shared user preferences across subdomains.</li>
-              <li>Connect social login providers in Supabase.</li>
-            </ul>
-          </article>
-        </section>
-      </main>
+            <div className="space-y-2 text-sm text-[#00ff00]/70">
+              <p className="font-mono">
+                &gt; No products configured yet
+              </p>
+              <p className="font-mono text-xs text-[#00ff00]/50">
+                // Connect your product subdomains here
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="border border-[#00ff00]/30 bg-[#0d0d0d] p-6">
+          <h2 className="text-sm font-mono uppercase tracking-widest text-[#a6e102] mb-4">
+            [ NEXT_STEPS ]
+          </h2>
+          <div className="space-y-3 text-sm">
+            <div className="flex items-start gap-2">
+              <span className="text-[#a6e102] font-mono">→</span>
+              <span className="text-[#00ff00]/80 font-mono">
+                Wire product-specific schemas & RLS policies
+              </span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-[#a6e102] font-mono">→</span>
+              <span className="text-[#00ff00]/80 font-mono">
+                Configure shared user preferences across subdomains
+              </span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-[#a6e102] font-mono">→</span>
+              <span className="text-[#00ff00]/80 font-mono">
+                Connect social login providers in Supabase
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 text-center">
+          <Link
+            href="/"
+            className="text-sm text-[#00ff00]/70 hover:text-[#a6e102] hover:underline font-mono"
+          >
+            [ back to gateway ]
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
-

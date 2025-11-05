@@ -1,6 +1,7 @@
 import Link from "next/link";
-
+import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import PageBackground from "@/components/PageBackground";
 
 export default async function Home() {
   const supabase = await createSupabaseServerClient();
@@ -9,75 +10,93 @@ export default async function Home() {
   } = await supabase.auth.getSession();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-10 px-6 py-24">
-        <header className="flex flex-col gap-4">
-          <span className="w-fit rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs uppercase tracking-widest text-slate-400">
-            CyberWorld Gateway
-          </span>
-          <h1 className="text-4xl font-semibold sm:text-5xl">
-            Unified access to every CyberWorld product.
-          </h1>
-          <p className="max-w-2xl text-lg text-slate-300">
-            Authenticate once, explore everywhere. Manage your account, products,
-            and shared permissions with Supabase-powered single sign-on.
+    <div className="text-center relative min-h-screen flex flex-col items-center justify-center px-6">
+      {/* Circuit background */}
+      <PageBackground opacity={15} fullWidth={true} />
+      
+      <div className="relative z-10 max-w-2xl">
+        <Image
+          src="/images/logo.png"
+          alt="CyberWorld Gateway Logo"
+          className="mx-auto mb-8"
+          style={{ maxWidth: "250px" }}
+          width={250}
+          height={250}
+          priority
+        />
+
+        <h1 className="text-3xl sm:text-4xl mb-4 text-[#00ff00] uppercase tracking-wider">
+          CyberWorld Gateway
+        </h1>
+
+        <p className="text-lg mb-8 text-[#00ff00]/70">
+          Unified access to every CyberWorld product.
+        </p>
+
+        <div className="mb-12 text-sm text-[#00ff00]/60">
+          <p className="mb-2">
+            {session
+              ? `> authenticated: ${session.user.email}`
+              : "> status: unauthenticated"}
           </p>
-        </header>
+        </div>
 
-        <section className="flex flex-col gap-6 rounded-2xl border border-slate-800 bg-slate-900/60 p-8 shadow-xl shadow-black/30 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-2">
-            <h2 className="text-xl font-semibold">Get started</h2>
-            <p className="text-sm text-slate-300">
-              {session
-                ? "You are signed in. Head over to your dashboard to continue."
-                : "Sign in or create an account to start building with CyberWorld."}
-            </p>
-          </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            {session ? (
+        <div className="flex justify-center gap-4 mb-8">
+          {session ? (
+            <Link
+              href="/dashboard"
+              className="text-sm text-[#00ff00] hover:text-[#a6e102] hover:underline uppercase transition"
+            >
+              [ dashboard ]
+            </Link>
+          ) : (
+            <>
               <Link
-                href="/dashboard"
-                className="inline-flex items-center justify-center rounded-lg bg-lime-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-lime-400"
+                href="/login"
+                className="text-sm text-[#00ff00] hover:text-[#a6e102] hover:underline uppercase transition"
               >
-                Go to dashboard
+                [ sign in ]
               </Link>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="inline-flex items-center justify-center rounded-lg bg-lime-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-lime-400"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  href="/register"
-                  className="inline-flex items-center justify-center rounded-lg border border-lime-500 px-4 py-2 text-sm font-semibold text-lime-300 transition hover:bg-lime-500/10"
-                >
-                  Create account
-                </Link>
-              </>
-            )}
-          </div>
-        </section>
+              <Link
+                href="/register"
+                className="text-sm text-[#00ff00] hover:text-[#a6e102] hover:underline uppercase transition"
+              >
+                [ create account ]
+              </Link>
+            </>
+          )}
+        </div>
 
-        <section className="grid gap-4 sm:grid-cols-2">
-          <article className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
-            <h3 className="text-lg font-semibold text-slate-200">Centralized SSO</h3>
-            <p className="mt-2 text-sm text-slate-400">
-              Supabase Auth keeps your users in sync across gateway and product
-              subdomains. Configure cookie domains to unlock instant cross-app
-              sessions.
-            </p>
-          </article>
-          <article className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
-            <h3 className="text-lg font-semibold text-slate-200">Product schemas</h3>
-            <p className="mt-2 text-sm text-slate-400">
-              Mirror the architecture plan with schema-per-product tables and RLS
-              policies, all managed in Supabase migrations.
-            </p>
-          </article>
-        </section>
-      </main>
+        <div className="border border-[#00ff00]/30 rounded p-6 bg-[#1a1a1a]/80 backdrop-blur text-left">
+          <p className="text-xs text-[#00ff00]/80 mb-4 font-mono">
+            // Gateway Features
+          </p>
+          <div className="space-y-3 text-sm">
+            <div>
+              <span className="text-[#a6e102]">→</span>{" "}
+              <span className="text-[#00ff00]/90">
+                Single Sign-On across all products
+              </span>
+            </div>
+            <div>
+              <span className="text-[#a6e102]">→</span>{" "}
+              <span className="text-[#00ff00]/90">
+                Supabase-powered authentication
+              </span>
+            </div>
+            <div>
+              <span className="text-[#a6e102]">→</span>{" "}
+              <span className="text-[#00ff00]/90">
+                Centralized user management
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-xs text-[#00ff00]/50 mt-8">
+          Creation is the remedy for emptiness.
+        </p>
+      </div>
     </div>
   );
 }

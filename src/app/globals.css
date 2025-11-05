@@ -1,26 +1,39 @@
 @import "tailwindcss";
 
+/* Optimized font loading for rebel hacker vibe */
+@font-face {
+  font-family: 'Courier New';
+  font-display: swap;
+  src: local('Courier New'), local('CourierNew');
+}
+
+/* Custom styles for CyberWorld aesthetic */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #1a1a1a;
+  --foreground: #00ff00;
+  --cyber-green: #00ff00;
+  --cyber-green-hover: #00cc00;
+  --cyber-lime: #a6e102;
+  --cyber-dark: #1a1a1a;
+  --cyber-darker: #0d0d0d;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Courier New', 'Ubuntu Mono', 'Consolas', 'Monaco', monospace;
+}
+
+/* Reset browser defaults for inputs */
+input,
+textarea,
+button {
+  font-family: 'Courier New', 'Ubuntu Mono', 'Consolas', 'Monaco', monospace;
+}
+
+/* Style placeholders */
+input::placeholder,
+textarea::placeholder {
+  color: var(--cyber-green);
+  opacity: 0.5;
 }
