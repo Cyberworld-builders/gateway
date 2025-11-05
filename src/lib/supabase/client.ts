@@ -20,7 +20,7 @@ let browserClient: SupabaseClient | undefined;
 
 export function getSupabaseBrowserClient(): SupabaseClient {
   if (!browserClient) {
-    browserClient = createBrowserClient(supabaseUrl, supabaseAnonKey);
+    browserClient = createBrowserClient(supabaseUrl!, supabaseAnonKey!);
   }
 
   return browserClient;
