@@ -22,20 +22,52 @@ function SubmitButton({ label }: { label: string }) {
   );
 }
 
-export function LoginForm({ redirectTo }: { redirectTo?: string }) {
+type OAuthParams = {
+  client_id: string;
+  redirect_uri: string;
+  state?: string;
+};
+
+export function LoginForm({ 
+  redirectTo, 
+  oauthParams 
+}: { 
+  redirectTo?: string;
+  oauthParams?: OAuthParams;
+}) {
   const [state, formAction] = useActionState(loginAction, initialState);
   const error = state?.error;
+
+  // Determine the product name from client_id
+  const productName = oauthParams?.client_id 
+    ? oauthParams.client_id.charAt(0).toUpperCase() + oauthParams.client_id.slice(1)
+    : "CyberWorld";
 
   return (
     <form className="flex flex-col gap-4" action={formAction}>
       <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold">Welcome back</h1>
+        <h1 className="text-2xl font-semibold">
+          {oauthParams ? `Sign in to ${productName}` : "Welcome back"}
+        </h1>
         <p className="text-sm text-slate-400">
-          Sign in to manage your CyberWorld workspace.
+          {oauthParams 
+            ? `Use your CyberWorld account to access ${productName}`
+            : "Sign in to manage your CyberWorld workspace."}
         </p>
       </div>
 
       <input type="hidden" name="redirectTo" value={redirectTo ?? "/dashboard"} />
+      
+      {/* OAuth parameters */}
+      {oauthParams && (
+        <>
+          <input type="hidden" name="client_id" value={oauthParams.client_id} />
+          <input type="hidden" name="redirect_uri" value={oauthParams.redirect_uri} />
+          {oauthParams.state && (
+            <input type="hidden" name="state" value={oauthParams.state} />
+          )}
+        </>
+      )}
 
       <label className="space-y-1 text-sm">
         <span className="text-slate-300">Email</span>

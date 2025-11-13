@@ -23,18 +23,43 @@ function SubmitButton({ label }: { label: string }) {
   );
 }
 
-export function RegisterForm() {
+type OAuthParams = {
+  client_id: string;
+  redirect_uri: string;
+  state?: string;
+};
+
+export function RegisterForm({ oauthParams }: { oauthParams?: OAuthParams }) {
   const [state, formAction] = useActionState(registerAction, initialState);
   const error = state?.error;
+
+  const productName = oauthParams?.client_id 
+    ? oauthParams.client_id.charAt(0).toUpperCase() + oauthParams.client_id.slice(1)
+    : "CyberWorld";
 
   return (
     <form className="flex flex-col gap-4" action={formAction}>
       <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold">Create your account</h1>
+        <h1 className="text-2xl font-semibold">
+          {oauthParams ? `Create account for ${productName}` : "Create your account"}
+        </h1>
         <p className="text-sm text-slate-400">
-          Sign up to access the CyberWorld gateway and products.
+          {oauthParams 
+            ? `Create a CyberWorld account to access ${productName}`
+            : "Sign up to access the CyberWorld gateway and products."}
         </p>
       </div>
+
+      {/* OAuth parameters */}
+      {oauthParams && (
+        <>
+          <input type="hidden" name="client_id" value={oauthParams.client_id} />
+          <input type="hidden" name="redirect_uri" value={oauthParams.redirect_uri} />
+          {oauthParams.state && (
+            <input type="hidden" name="state" value={oauthParams.state} />
+          )}
+        </>
+      )}
 
       <label className="space-y-1 text-sm">
         <span className="text-slate-300">Email</span>

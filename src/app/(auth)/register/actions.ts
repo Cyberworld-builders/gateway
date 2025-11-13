@@ -14,6 +14,11 @@ export async function registerAction(
   const email = formData.get("email");
   const password = formData.get("password");
   const confirmPassword = formData.get("confirmPassword");
+  
+  // OAuth parameters
+  const clientId = formData.get("client_id") as string | null;
+  const redirectUri = formData.get("redirect_uri") as string | null;
+  const state = formData.get("state") as string | null;
 
   if (typeof email !== "string" || typeof password !== "string") {
     return { error: "Email and password are required." };
@@ -40,6 +45,18 @@ export async function registerAction(
     return { error: error.message };
   }
 
+  // If OAuth flow and we have a session, redirect back to the product
+  if (clientId && redirectUri && session) {
+    const callbackUrl = new URL(redirectUri);
+    callbackUrl.searchParams.set("code", session.access_token);
+    if (state) {
+      callbackUrl.searchParams.set("state", state);
+    }
+    
+    redirect(callbackUrl.toString());
+  }
+
+  // Normal registration flow
   const destination = session ? "/dashboard" : "/login";
   revalidatePath(destination);
   redirect(destination);
