@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -90,25 +89,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create Supabase client (for RPC function in gateway schema)
-    const supabase = await createSupabaseServerClient();
+    // Use Prisma's raw SQL to call the gateway.upsert_lead function
+    const result = await prisma.$queryRaw<Array<{ lead_id: string; message: string }>>`
+      SELECT * FROM gateway.upsert_lead(
+        ${normalizedEmail}::text,
+        ${product}::text,
+        ${JSON.stringify({
+          ...metadata,
+          captured_at: new Date().toISOString(),
+          user_agent: request.headers.get("user-agent") || "unknown",
+          referer: request.headers.get("referer") || "direct",
+        })}::jsonb
+      )
+    `;
 
-    // Use the gateway.upsert_lead function to handle insert/update logic
-    const { data, error } = await supabase.rpc("upsert_lead", {
-      p_email: normalizedEmail,
-      p_product: product,
-      p_metadata: {
-        ...metadata,
-        captured_at: new Date().toISOString(),
-        user_agent: request.headers.get("user-agent") || "unknown",
-        referer: request.headers.get("referer") || "direct",
-      },
-    }, {
-      schema: "gateway"  // Specify the gateway schema
-    });
-
-    if (error) {
-      console.error("Error upserting lead:", error);
+    const data = result[0];
+    if (!data) {
       return NextResponse.json(
         { success: false, error: "Failed to save lead" },
         { status: 500, headers: corsHeaders }
