@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 // CORS headers for cross-origin requests
 const corsHeaders = {
@@ -87,10 +90,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create Supabase client
+    // Create Supabase client (for RPC function in gateway schema)
     const supabase = await createSupabaseServerClient();
 
-    // Use the upsert_lead function to handle insert/update logic
+    // Use the gateway.upsert_lead function to handle insert/update logic
     const { data, error } = await supabase.rpc("upsert_lead", {
       p_email: normalizedEmail,
       p_product: product,
@@ -100,6 +103,8 @@ export async function POST(request: NextRequest) {
         user_agent: request.headers.get("user-agent") || "unknown",
         referer: request.headers.get("referer") || "direct",
       },
+    }, {
+      schema: "gateway"  // Specify the gateway schema
     });
 
     if (error) {
@@ -139,34 +144,28 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const supabase = await createSupabaseServerClient();
+    // Use Prisma to query gateway.leads table
+    const lead = await prisma.lead.findUnique({
+      where: { email: email.trim().toLowerCase() },
+      select: { id: true, products: true, status: true },
+    });
 
-    const { data, error } = await supabase
-      .from("leads")
-      .select("id, products, status")
-      .eq("email", email.trim().toLowerCase())
-      .single();
-
-    if (error) {
-      if (error.code === "PGRST116") {
-        // No rows returned
-        return NextResponse.json({
-          success: true,
-          subscribed: false,
-        });
-      }
-      throw error;
+    if (!lead) {
+      return NextResponse.json({
+        success: true,
+        subscribed: false,
+      }, { headers: corsHeaders });
     }
 
     const isSubscribedToProduct = product
-      ? data.products.includes(product)
-      : data.products.length > 0;
+      ? lead.products.includes(product)
+      : lead.products.length > 0;
 
     return NextResponse.json({
       success: true,
       subscribed: isSubscribedToProduct,
-      status: data.status,
-      products: data.products,
+      status: lead.status,
+      products: lead.products,
     }, { headers: corsHeaders });
   } catch (error) {
     console.error("Error checking lead subscription:", error);

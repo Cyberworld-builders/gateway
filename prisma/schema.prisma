@@ -1,6 +1,3 @@
-// Gateway Prisma Schema
-// Manages shared/cross-product database tables
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,19 +8,18 @@ datasource db {
   schemas  = ["gateway"]
 }
 
-// Leads table - Cross-product lead capture
 model Lead {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email     String   @unique
   products  String[]
   status    String   @default("active")
   metadata  Json     @default("{}")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
+  @@index([email])
+  @@index([products], type: Gin)
+  @@index([status])
   @@map("leads")
   @@schema("gateway")
-  @@index([email])
-  @@index([products])
-  @@index([status])
 }
