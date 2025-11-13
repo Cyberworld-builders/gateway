@@ -1,20 +1,21 @@
 import { LoginForm } from "./LoginForm";
 
 type LoginPageProps = {
-  searchParams?: { 
+  searchParams: Promise<{ 
     redirectedFrom?: string;
     client_id?: string;
     redirect_uri?: string;
     state?: string;
     response_type?: string;
-  };
+  }>;
 };
 
-export default function LoginPage({ searchParams }: LoginPageProps) {
-  const redirectTo = searchParams?.redirectedFrom;
-  const clientId = searchParams?.client_id;
-  const redirectUri = searchParams?.redirect_uri;
-  const state = searchParams?.state;
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const params = await searchParams;
+  const redirectTo = params?.redirectedFrom;
+  const clientId = params?.client_id;
+  const redirectUri = params?.redirect_uri;
+  const state = params?.state;
 
   // If OAuth parameters are present, pass them to the form
   const oauthParams = clientId && redirectUri ? {

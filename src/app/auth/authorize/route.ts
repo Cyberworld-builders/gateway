@@ -86,11 +86,16 @@ export async function GET(request: NextRequest) {
       callbackUrl.searchParams.set("state", state);
     }
 
+    console.log("User authenticated, redirecting to:", callbackUrl.toString());
     return NextResponse.redirect(callbackUrl);
   }
 
   // User not logged in, redirect to login page with return URL
-  const loginUrl = new URL("/auth/login", request.url);
+  // Use the Host header to preserve the hostname the client used (e.g., 10.0.0.201 vs localhost)
+  const host = request.headers.get("host") || request.nextUrl.host;
+  const protocol = request.headers.get("x-forwarded-proto") || request.nextUrl.protocol.replace(":", "");
+  const origin = `${protocol}://${host}`;
+  const loginUrl = new URL(`${origin}/login`);
   loginUrl.searchParams.set("client_id", clientId);
   loginUrl.searchParams.set("redirect_uri", redirectUri);
   if (state) {
@@ -98,6 +103,7 @@ export async function GET(request: NextRequest) {
   }
   loginUrl.searchParams.set("response_type", responseType);
 
+  console.log("User not authenticated, redirecting to login:", loginUrl.toString());
   return NextResponse.redirect(loginUrl);
 }
 

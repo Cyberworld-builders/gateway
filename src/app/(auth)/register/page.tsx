@@ -1,17 +1,18 @@
 import { RegisterForm } from "./RegisterForm";
 
 type RegisterPageProps = {
-  searchParams?: { 
+  searchParams: Promise<{ 
     client_id?: string;
     redirect_uri?: string;
     state?: string;
-  };
+  }>;
 };
 
-export default function RegisterPage({ searchParams }: RegisterPageProps) {
-  const clientId = searchParams?.client_id;
-  const redirectUri = searchParams?.redirect_uri;
-  const state = searchParams?.state;
+export default async function RegisterPage({ searchParams }: RegisterPageProps) {
+  const params = await searchParams;
+  const clientId = params?.client_id;
+  const redirectUri = params?.redirect_uri;
+  const state = params?.state;
 
   const oauthParams = clientId && redirectUri ? {
     client_id: clientId,

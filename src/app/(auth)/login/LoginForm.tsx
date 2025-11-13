@@ -102,7 +102,14 @@ export function LoginForm({
 
       <p className="text-center text-sm text-slate-400">
         Need an account?{" "}
-        <Link className="text-lime-400 hover:text-lime-300" href="/register">
+        <Link 
+          className="text-lime-400 hover:text-lime-300" 
+          href={
+            oauthParams 
+              ? `/register?client_id=${oauthParams.client_id}&redirect_uri=${encodeURIComponent(oauthParams.redirect_uri)}${oauthParams.state ? `&state=${oauthParams.state}` : ''}`
+              : "/register"
+          }
+        >
           Register here
         </Link>
         .

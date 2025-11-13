@@ -106,7 +106,14 @@ export function RegisterForm({ oauthParams }: { oauthParams?: OAuthParams }) {
 
       <p className="text-center text-sm text-slate-400">
         Already have an account?{" "}
-        <Link className="text-lime-400 hover:text-lime-300" href="/login">
+        <Link 
+          className="text-lime-400 hover:text-lime-300" 
+          href={
+            oauthParams 
+              ? `/login?client_id=${oauthParams.client_id}&redirect_uri=${encodeURIComponent(oauthParams.redirect_uri)}${oauthParams.state ? `&state=${oauthParams.state}` : ''}`
+              : "/login"
+          }
+        >
           Sign in
         </Link>
         .
